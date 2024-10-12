@@ -8,7 +8,6 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -23,8 +22,7 @@ const SplashScreen = ({ navigation }: { navigation: any }) => {
 
   const pages = [
     {
-      title:
-        "You're one step closer to achieving your music and podcast dreams.",
+      title: "You're one step closer to achieving your music and podcast dreams.",
       image: require("../assets/images/onboarding/microphone.png"), // Replace with your image path
     },
     {
@@ -32,8 +30,7 @@ const SplashScreen = ({ navigation }: { navigation: any }) => {
       image: require("../assets/images/onboarding/discover.png"), // Replace with your image path
     },
     {
-      title:
-        "Enrich your mind with our curated selection of music, podcasts, and sermons.",
+      title: "Enrich your mind with our curated selection of music, podcasts, and sermons.",
       image: require("../assets/images/onboarding/enrich.png"), // Replace with your image path
     },
   ];
@@ -63,41 +60,26 @@ const SplashScreen = ({ navigation }: { navigation: any }) => {
     translateX.value = withSpring(-index * width);
   };
 
-  const onGestureEvent = (event: any) => {
-    const { translationX } = event.nativeEvent;
-    translateX.value = translationX + -page * width;
-
-    if (translationX < -100) {
-      goToNextPage();
-    } else if (translationX > 100) {
-      goToPreviousPage();
-    } else {
-      translateX.value = withSpring(-page * width);
-    }
-  };
-
   return (
     <View style={styles.container}>
-      <PanGestureHandler onGestureEvent={onGestureEvent}>
-        <Animated.View
-          style={[
-            styles.swipeContainer,
-            { width: width * pages.length },
-            animatedStyle,
-          ]}
-        >
-          {pages.map((p, index) => (
-            <View key={index} style={styles.page}>
-              <Image
-                source={p.image}
-                style={styles.image}
-                resizeMode="contain"
-              />
-              <Text style={styles.title}>{p.title}</Text>
-            </View>
-          ))}
-        </Animated.View>
-      </PanGestureHandler>
+      <Animated.View
+        style={[
+          styles.swipeContainer,
+          { width: width * pages.length },
+          animatedStyle,
+        ]}
+      >
+        {pages.map((p, index) => (
+          <View key={index} style={styles.page}>
+            <Image
+              source={p.image}
+              style={styles.image}
+              resizeMode="contain"
+            />
+            <Text style={styles.title}>{p.title}</Text>
+          </View>
+        ))}
+      </Animated.View>
       <View style={styles.buttonContainer}>
         <ArrowButton
           direction="prev"
@@ -172,15 +154,6 @@ const styles = StyleSheet.create({
   activeTab: {
     backgroundColor: "#0056b3", // Active tab color
     width: 40,
-  },
-  skipContainer: {
-    position: "absolute",
-    top: 40,
-    right: 20,
-  },
-  skipText: {
-    fontSize: 16,
-    color: "#007bff", // Change color if needed
   },
 });
 
