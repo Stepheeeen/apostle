@@ -13,12 +13,14 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
 const SplashScreen = ({ navigation }: { navigation: any }) => {
   const [page, setPage] = useState(0);
   const translateX = useSharedValue(0);
+  const router = useRouter();
 
   const pages = [
     {
@@ -44,7 +46,8 @@ const SplashScreen = ({ navigation }: { navigation: any }) => {
       setPage(page + 1);
       translateX.value = withSpring(-((page + 1) * width));
     } else {
-      navigation.navigate("SignUp"); // Navigate to SignUp page
+      // Navigate to SignUp page
+      router.push("/Auth/Signup");
     }
   };
 
@@ -96,10 +99,13 @@ const SplashScreen = ({ navigation }: { navigation: any }) => {
             />
           ))}
         </View>
+
+        {/* Remove the disabled prop when on the last page */}
         <ArrowButton
           direction="next"
           onPress={goToNextPage}
-          disabled={page === pages.length - 1}
+          disabled={false}
+          // Keep the button enabled even on the last page
         />
       </View>
     </View>
