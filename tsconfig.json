@@ -14,5 +14,5 @@
     "**/*.js",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "app/Pages/Home/index.jsx", "components/carouselSlide/Carousel.tsx", "components/reusable/Navbar.jsx"  ]
 }

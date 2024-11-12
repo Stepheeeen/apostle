@@ -14,26 +14,82 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useRouter } from "expo-router";
+import tw from "twrnc";
 
 const { width } = Dimensions.get("window");
 
-const SplashScreen = ({ navigation }: { navigation: any }) => {
+const SplashScreen = () => {
   const [page, setPage] = useState(0);
   const translateX = useSharedValue(0);
   const router = useRouter();
 
   const pages = [
     {
-      title: "You're one step closer to achieving your music and podcast dreams.",
-      image: require("../assets/images/onboarding/microphone.png"), // Replace with your image path
+      content: (
+        <View style={tw`w-full h-[85%] mb-[20%] flex justify-center`}>
+          <View style={tw`px-5 mt-[-10%]`}>
+            <Text style={tw`text-[#373737] font-bold text-[36px]`}>
+              You're one step closer to achieving your
+            </Text>
+            <Text style={tw`text-[#0081C9] font-bold text-[36px]`}>
+              music and podcast dreams.
+            </Text>
+          </View>
+
+          <Image
+            source={require("../assets/images/onboarding/microphone.png")}
+            style={tw`absolute bottom-0`}
+          />
+        </View>
+      ),
     },
     {
-      title: "Discover music and podcasts that resonate with your soul.",
-      image: require("../assets/images/onboarding/discover.png"), // Replace with your image path
+      content: (
+        <View
+          style={tw`w-full h-[85%] mb-[20%] flex justify-evenly items-center`}
+        >
+          <Image
+            source={require("../assets/images/onboarding/discover.png")}
+            style={tw``}
+          />
+
+          <View style={tw`px-5 mt-[-10%]`}>
+            <Text
+              style={tw`text-[#373737] text-center font-semibold text-[24px] mb-8`}
+            >
+              Discover music and podcasts that resonate with your soul.
+            </Text>
+            <Text style={tw`text-[#808080] text-center text-[15px]`}>
+              Reach your spiritual goals effortlessly, whether it's deepening
+              your faith or finding uplifting sermons and songs.
+            </Text>
+          </View>
+        </View>
+      ),
     },
     {
-      title: "Enrich your mind with our curated selection of music, podcasts, and sermons.",
-      image: require("../assets/images/onboarding/enrich.png"), // Replace with your image path
+      content: (
+        <View
+          style={tw`w-full h-[85%] mb-[20%] flex justify-evenly items-center`}
+        >
+          <Image
+            source={require("../assets/images/onboarding/enrich.png")}
+            style={tw``}
+          />
+
+          <View style={tw`px-5 mt-[-10%]`}>
+            <Text
+              style={tw`text-[#373737] text-center font-semibold text-[25px] mb-8`}
+            >
+              Enrich your mind, with our curated selection of music, podcasts
+              and sermons.
+            </Text>
+            <Text style={tw`text-[#808080] text-center text-[16px]`}>
+              Access music and podcasts anytime, anywhere, no matter your taste.
+            </Text>
+          </View>
+        </View>
+      ),
     },
   ];
 
@@ -74,12 +130,7 @@ const SplashScreen = ({ navigation }: { navigation: any }) => {
       >
         {pages.map((p, index) => (
           <View key={index} style={styles.page}>
-            <Image
-              source={p.image}
-              style={styles.image}
-              resizeMode="contain"
-            />
-            <Text style={styles.title}>{p.title}</Text>
+            {p.content}
           </View>
         ))}
       </Animated.View>
@@ -126,7 +177,7 @@ const styles = StyleSheet.create({
     width: width,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    // padding: ,
   },
   image: {
     width: "80%", // Adjust as needed

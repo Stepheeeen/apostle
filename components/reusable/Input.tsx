@@ -46,6 +46,7 @@ const Input: React.FC<InputProps> = ({ label, secureTextEntry = false }) => {
         <TextInput
           style={tw`flex-1 text-base`}
           placeholder={label}
+          placeholderTextColor="#A1A1A1" // Set placeholder color to gray
           secureTextEntry={isPasswordVisible}
           onFocus={handleFocus}
           onBlur={handleBlur}

@@ -27,7 +27,7 @@ const SignIn = () => {
           direction="next"
           disabled={false}
           onPress={() => {
-            // Sign up functionality here
+            router.push("/Pages/Home")
           }}
         />
       </View>

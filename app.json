@@ -13,13 +13,15 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.washwisee.apostle"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Apostle-Logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.washwisee.apostle"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +33,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1768bbb5-656c-4a5b-8967-eca6e8bef51e"
+      }
     }
   }
 }
