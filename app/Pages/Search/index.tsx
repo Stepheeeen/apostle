@@ -82,7 +82,7 @@ const Index = () => {
                     Recommended Musics & Podcasts
                   </Text>
                   <View style={tw`gap-y-3`}>
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((item) => (
+                    {[1, 2, 3, 4].map((item) => (
                       <Pressable
                         key={item}
                         style={tw`flex-row items-center p-2 bg-white rounded-lg shadow-sm`}
@@ -98,6 +98,65 @@ const Index = () => {
                       </Pressable>
                     ))}
                   </View>
+                </View>
+
+                {/* Categories section */}
+                <View style={tw`w-[98%] p-4`}>
+                  <Text style={tw`text-lg font-bold mb-3`}>
+                    Recommended Categories
+                  </Text>
+                  {[
+                    {
+                      background1: "gray-200",
+                      name1: "Music",
+                      background2: "gray-200",
+                      name2: "Podcast",
+                    },
+                    {
+                      background1: "gray-200",
+                      name1: "Artist",
+                      background2: "gray-200",
+                      name2: "Pastor",
+                    },
+                    {
+                      background1: "gray-200",
+                      name1: "Choir",
+                      background2: "gray-200",
+                      name2: "Song",
+                    },
+                    {
+                      background1: "gray-200",
+                      name1: "Minister",
+                      background2: "gray-200",
+                      name2: "Churche",
+                    },
+                    {
+                      background1: "gray-200",
+                      name1: "Preaching",
+                      background2: "gray-200",
+                      name2: "Hymn",
+                    },
+                  ].map((container, item) => (
+                    <View
+                      key={item}
+                      style={tw`w-full flex flex-row items-center justify-between gap-3 mb-3`}
+                    >
+                      <View
+                        style={tw`w-1/2 h-25 flex items-center justify-center rounded-lg bg-${container.background1}`}
+                      >
+                        <Text style={tw`text-[19px] font-medium`}>
+                          {container.name1}s
+                        </Text>
+                      </View>
+                      <View
+                        style={tw`w-1/2 h-25 flex items-center justify-center rounded-lg bg-${container.background2}`}
+                      >
+                        <Text style={tw`text-[19px] font-medium`}>
+                          {container.name2}s
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
                 </View>
               </ScrollView>
             ) : (
