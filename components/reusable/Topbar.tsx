@@ -14,7 +14,7 @@ const Topbar = () => {
         <Text style={tw`ml-1 text-[#0081C9] font-semibold`}>APOSTOLE</Text>
       </View>
       <Pressable onPress={()=>{router.push("/Pages/Profile")}}>
-        <View style={tw`h-8 w-8 rounded-full bg-gray-200`} />
+        <View style={tw`h-9 w-9 rounded-full bg-gray-300`} />
       </Pressable>
     </View>
   );
