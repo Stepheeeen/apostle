@@ -1,12 +1,45 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Pressable } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
 import Input from "@/components/reusable/Input";
 import ArrowButton from "@/components/reusable/Button";
+import axios from "axios";
 import { Link, router } from "expo-router";
 
 const SignIn = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Validation Error", "Please fill in all fields.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post("https://apostle.onrender.com/api/auth/login", {
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        Alert.alert("Login Successful", "Welcome back!");
+        router.push("/Pages/Home");
+      }
+    } catch (error:any) {
+      Alert.alert(
+        "Login Failed",
+        error.response?.data?.message || "Something went wrong. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={tw`flex-1 bg-white p-4 pt-[10%]`}>
       {/* Back Button */}
@@ -14,25 +47,28 @@ const SignIn = () => {
         <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>
 
-      {/* Create Account Header */}
+      {/* Welcome Back Header */}
       <Text style={tw`text-3xl font-bold mb-6`}>Welcome Back</Text>
 
       {/* Input Fields */}
-      <Input label="Name" />
-      <Input label="Password" secureTextEntry={true} />
+      <Input label="Email" value={email} onChangeText={(text) => setEmail(text)} />
+      <Input
+        label="Password"
+        secureTextEntry={true}
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+      />
 
-      {/* Sign Up Button */}
+      {/* Login Button */}
       <View style={tw`w-full flex items-end mt-6`}>
         <ArrowButton
           direction="next"
-          disabled={false}
-          onPress={() => {
-            router.push("/Pages/Home")
-          }}
+          disabled={loading}
+          onPress={handleLogin}
         />
       </View>
 
-      {/* Sign In Link */}
+      {/* Sign Up & Forgot Password Links */}
       <View style={tw`w-full flex flex-row items-center justify-between mt-4`}>
         <Link href={"/Auth/Signup"} style={tw`text-blue-500 underline mt-4`}>
           Sign Up

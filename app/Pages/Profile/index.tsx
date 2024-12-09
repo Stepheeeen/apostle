@@ -49,7 +49,7 @@ const SettingsScreen: React.FC = () => {
         <Ionicons name="chevron-back" size={25} color="#4B5563" />
         <Text
           style={tw`text-[17px] font-medium text-[#4B5563]`}
-          onPress={() => router.back}
+          onPress={() => router.push('/Pages/Home')}
         >
           Back
         </Text>
@@ -111,6 +111,14 @@ const SettingsScreen: React.FC = () => {
           title="About"
           subtitle="View Contributors and App Version"
           onPress={() => handleItemPress("about")}
+        />
+         <SettingsItem
+          icon={
+            <Ionicons name="color-palette-outline" size={24} color="#4B5563" />
+          }
+          title="Sample Page"
+          subtitle="Checking out the new page"
+          onPress={() => router.push("/Pages/Sample")}
         />
       </SafeAreaView>
     </>

@@ -6,9 +6,16 @@ import { MaterialIcons } from '@expo/vector-icons';
 type InputProps = {
   label: string;
   secureTextEntry?: boolean;
+  value: string;
+  onChangeText: (text: string) => void;
 };
 
-const Input: React.FC<InputProps> = ({ label, secureTextEntry = false }) => {
+const Input: React.FC<InputProps> = ({
+  label,
+  secureTextEntry = false,
+  value,
+  onChangeText,
+}) => {
   const [isPasswordVisible, setPasswordVisible] = useState(secureTextEntry);
   const [isFocused, setFocused] = useState(false);
   const borderColor = useRef(new Animated.Value(0)).current;
@@ -42,14 +49,21 @@ const Input: React.FC<InputProps> = ({ label, secureTextEntry = false }) => {
 
   return (
     <View style={tw`mb-4`}>
-      <Animated.View style={[tw`flex-row items-center border-b p-2 mt-3 rounded-lg`, { borderColor: borderStyle }]}>
+      <Animated.View
+        style={[
+          tw`flex-row items-center border-b p-2 mt-3 rounded-lg`,
+          { borderColor: borderStyle,},
+        ]}
+      >
         <TextInput
           style={tw`flex-1 text-base`}
           placeholder={label}
           placeholderTextColor="#A1A1A1" // Set placeholder color to gray
-          secureTextEntry={isPasswordVisible}
+          secureTextEntry={secureTextEntry && isPasswordVisible}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          value={value}
+          onChangeText={onChangeText}
         />
         {secureTextEntry && (
           <TouchableOpacity onPress={togglePasswordVisibility}>
