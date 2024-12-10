@@ -4,6 +4,7 @@ import { Audio } from 'expo-av';
 import axios from 'axios';
 import tw from 'twrnc';
 
+// Define the track type
 type Track = {
   trackImg: string;
   title: string;
@@ -26,10 +27,10 @@ const MusicPlayer: React.FC = () => {
   useEffect(() => {
     const fetchTracks = async () => {
       try {
-        const response = await axios.get('https://apostle.onrender.com/api/song/getAllSongs', {withCredentials:true});
+        const response = await axios.get('https://apostle.onrender.com/api/song/getAllSongs', { withCredentials: true });
         setTracks(response.data.data);
         setLoading(false);
-      } catch (error:any) {
+      } catch (error: any) {
         console.error('Error fetching tracks:', error.message);
         setLoading(false);
       }
@@ -37,6 +38,7 @@ const MusicPlayer: React.FC = () => {
 
     fetchTracks();
 
+    // Cleanup when unmounting
     return () => {
       if (sound) {
         sound.unloadAsync();
@@ -98,18 +100,43 @@ const MusicPlayer: React.FC = () => {
 
   return (
     <View style={tw`flex-1 p-5 justify-center items-center`}>
-      <Image source={{ uri: currentTrack.trackImg }} style={tw`w-48 h-48 rounded-lg mb-5`} />
+      {/* Track Image */}
+      <Image
+        source={{ uri: currentTrack.trackImg }}
+        style={tw`w-48 h-48 rounded-lg mb-5`}
+      />
+
+      {/* Track Title & Author */}
       <Text style={tw`text-xl font-bold mb-2`}>{currentTrack.title}</Text>
       <Text style={tw`text-lg text-gray-600 mb-2`}>{currentTrack.author}</Text>
-      <Text style={tw`text-base text-gray-500 mb-5`}>{currentTrack.description}</Text>
+
+      {/* Track Description */}
+      <Text style={tw`text-base text-gray-500 mb-5`}>
+        {currentTrack.description}
+      </Text>
+
+      {/* Playback Controls */}
       <View style={tw`flex-row justify-between w-3/4`}>
-        <TouchableOpacity onPress={() => skipTrackHandler(-1)} style={tw`bg-blue-500 px-4 py-2 rounded-md`}>
+        <TouchableOpacity
+          onPress={() => skipTrackHandler(-1)}
+          style={tw`bg-blue-500 px-4 py-2 rounded-md`}
+        >
           <Text style={tw`text-white text-lg`}>Previous</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={playPauseHandler} style={tw`bg-green-500 px-4 py-2 rounded-md`}>
-          <Text style={tw`text-white text-lg`}>{isPlaying ? 'Pause' : 'Play'}</Text>
+
+        <TouchableOpacity
+          onPress={playPauseHandler}
+          style={tw`bg-green-500 px-4 py-2 rounded-md`}
+        >
+          <Text style={tw`text-white text-lg`}>
+            {isPlaying ? 'Pause' : 'Play'}
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => skipTrackHandler(1)} style={tw`bg-blue-500 px-4 py-2 rounded-md`}>
+
+        <TouchableOpacity
+          onPress={() => skipTrackHandler(1)}
+          style={tw`bg-blue-500 px-4 py-2 rounded-md`}
+        >
           <Text style={tw`text-white text-lg`}>Next</Text>
         </TouchableOpacity>
       </View>

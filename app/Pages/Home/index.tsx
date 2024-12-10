@@ -27,7 +27,7 @@ const Index = () => {
           {/* Logo and Avatar Header */}
           <Topbar />
 
-          <ScrollView style={tw`bg-gray-50 h-full w-full`}>
+          <ScrollView style={tw`bg-gray-50 h-full w-full mb-[90px]`}>
             {/* Main Content */}
             <CarouselComponent />
 
