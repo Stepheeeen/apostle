@@ -11,7 +11,7 @@ const Topbar = () => {
           source={require("../../assets/images/Apostle-Logo-sm.png")}
           style={tw`h-8 w-8`}
         />
-        <Text style={tw`ml-1 text-[#0081C9] font-semibold`}>APOSTOLE</Text>
+        <Text style={tw`ml-1 text-[#0081C9] font-semibold`}>APOSTLE</Text>
       </View>
       <Pressable onPress={()=>{router.push("/Pages/Profile")}}>
         <View style={tw`h-9 w-9 rounded-full bg-gray-300`} />

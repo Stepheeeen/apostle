@@ -1,5 +1,10 @@
+import axios from "axios";
+import {
+  GetCategories,
+  GetQuickPicks,
+  GetTrending,
+} from "@/components/getPlaylists/getPlaylists";
 import NavigationBar from "@/components/reusable/Navbar";
-import SearchBar from "@/components/reusable/Searchbar";
 import { SearchSkeleton } from "@/components/reusable/Skeleton";
 import Topbar from "@/components/reusable/Topbar";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -8,17 +13,20 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   Text,
   TextInput,
   View,
+  Image,
 } from "react-native";
 import tw from "twrnc";
+import { SongProvider } from "@/contexts/SongContext";
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [results, setResults] = useState([]); // State to store search results
+  const [isSearching, setIsSearching] = useState(false); // To handle loading state for search results
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -28,12 +36,32 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Fetch data based on search query using axios
+  useEffect(() => {
+    if (search === "") {
+      setResults([]); // Clear results if search is empty
+      return;
+    }
+
+    setIsSearching(true);
+    axios
+      .get(`https://apostle.onrender.com/api/song/getSongWithQuery/${search}`)
+      .then((response) => {
+        setResults(response.data.data); // Set fetched data
+        setIsSearching(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setIsSearching(false);
+      });
+  }, [search]);
+
   return (
     <>
       {isLoading ? (
         <SearchSkeleton />
       ) : (
-        <>
+        <SongProvider>
           {/* Logo and Avatar Header */}
           <KeyboardAvoidingView
             style={{ flex: 1, marginBottom: 80 }}
@@ -61,126 +89,53 @@ const Index = () => {
             {search === "" ? (
               <ScrollView style={tw`bg-gray-50 h-full w-full`}>
                 {/* Trending */}
-                <View style={tw`px-4 mb-6`}>
-                  <Text style={tw`text-lg font-bold mb-3`}>
-                    Recommended Albums & Playlists
-                  </Text>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {[1, 2, 3, 4, 5, 6, 7].map((item) => (
-                      <View key={item} style={tw`mr-4`}>
-                        <View
-                          style={tw`w-30 h-30 bg-gray-200 rounded-xl mb-2`}
-                        />
-                      </View>
-                    ))}
-                  </ScrollView>
+                <View style={tw`mb-6 mt-3`}>
+                  <GetTrending text=" Recommended Albums & Playlists" />
                 </View>
 
                 {/* Quick Picks Section */}
-                <View style={tw`px-4 mb-6`}>
-                  <Text style={tw`text-lg font-bold mb-3`}>
-                    Recommended Musics & Podcasts
-                  </Text>
-                  <View style={tw`gap-y-3`}>
-                    {[1, 2, 3, 4].map((item) => (
-                      <Pressable
-                        key={item}
-                        style={tw`flex-row items-center p-2 bg-white rounded-lg shadow-sm`}
-                      >
-                        <View style={tw`w-12 h-12 bg-gray-200 rounded mr-3`} />
-                        <View style={tw`flex-1`}>
-                          <Text style={tw`font-medium`}>Song Title</Text>
-                          <Text style={tw`text-sm text-gray-600`}>
-                            Artist Name
-                          </Text>
-                        </View>
-                        <Ionicons name={"play"} size={24} color={"#0081C9"} />
-                      </Pressable>
-                    ))}
-                  </View>
+                <View style={tw`mb-6`}>
+                  <GetQuickPicks text={"Recommended Musics & Podcasts"} />
                 </View>
 
                 {/* Categories section */}
-                <View style={tw`w-[98%] p-4`}>
-                  <Text style={tw`text-lg font-bold mb-3`}>
+                <View style={tw`w-[98%]`}>
+                  <Text style={tw`text-lg font-bold mb-3 px-4`}>
                     Recommended Categories
                   </Text>
-                  {[
-                    {
-                      background1: "gray-200",
-                      name1: "Music",
-                      background2: "gray-200",
-                      name2: "Podcast",
-                    },
-                    {
-                      background1: "gray-200",
-                      name1: "Artist",
-                      background2: "gray-200",
-                      name2: "Pastor",
-                    },
-                    {
-                      background1: "gray-200",
-                      name1: "Choir",
-                      background2: "gray-200",
-                      name2: "Song",
-                    },
-                    {
-                      background1: "gray-200",
-                      name1: "Minister",
-                      background2: "gray-200",
-                      name2: "Churche",
-                    },
-                    {
-                      background1: "gray-200",
-                      name1: "Preaching",
-                      background2: "gray-200",
-                      name2: "Hymn",
-                    },
-                  ].map((container, item) => (
-                    <View
-                      key={item}
-                      style={tw`w-full flex flex-row items-center justify-between gap-3 mb-3`}
-                    >
-                      <View
-                        style={tw`w-1/2 h-25 flex items-center justify-center rounded-lg bg-${container.background1}`}
-                      >
-                        <Text style={tw`text-[19px] font-medium`}>
-                          {container.name1}s
-                        </Text>
-                      </View>
-                      <View
-                        style={tw`w-1/2 h-25 flex items-center justify-center rounded-lg bg-${container.background2}`}
-                      >
-                        <Text style={tw`text-[19px] font-medium`}>
-                          {container.name2}s
-                        </Text>
-                      </View>
-                    </View>
-                  ))}
+                  <GetCategories />
                 </View>
               </ScrollView>
             ) : (
               <FlatList
-                data={[
-                  { key: "Devin" },
-                  { key: "Dan" },
-                  { key: "Dominic" },
-                  { key: "Jackson" },
-                  { key: "James" },
-                  { key: "Joel" },
-                ]}
+                data={results}
                 renderItem={({ item }: any) => (
-                  <View style={tw`border-b border-gray-100 p-3 px-6 mb-2 mt-3`}>
-                    <Text>{item.key}</Text>
+                  <View
+                    style={tw`flex flex-row border-b border-gray-100 p-3 px-6 mb-2 mt-3`}
+                  >
+                    {/* Track Image */}
+                    <Image
+                      source={{ uri: item.trackImg }}
+                      style={tw`w-14 h-14 rounded-lg mb-3`}
+                    />
+                    <View style={tw`ml-2`}>
+                      <Text style={tw`font-bold text-lg`}>{item.title}</Text>
+                      <Text style={tw`text-sm text-gray-600`}>
+                        {item.author}
+                      </Text>
+                    </View>
                   </View>
                 )}
-                keyExtractor={(item) => item.key} // Added keyExtractor for performance optimization
+                keyExtractor={(item: any) => item.trackId} // Using trackId as unique key
+                ListHeaderComponent={
+                  isSearching ? <Text>Loading...</Text> : null
+                }
               />
             )}
           </KeyboardAvoidingView>
 
           <NavigationBar />
-        </>
+        </SongProvider>
       )}
     </>
   );

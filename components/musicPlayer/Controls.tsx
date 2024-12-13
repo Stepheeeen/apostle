@@ -2,6 +2,7 @@
 import React from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import tailwind from "twrnc";
 
 interface ControlsProps {
@@ -40,11 +41,7 @@ const Controls: React.FC<ControlsProps> = ({
       </View>
       <View style={styles.controls}>
         <TouchableOpacity onPress={handlePrev}>
-          <Ionicons
-            name="play-skip-back-outline"
-            size={30}
-            color={isDarkTheme ? "#fff" : "#fff"}
-          />
+          <AntDesign name="stepbackward" size={30} color="white" />
         </TouchableOpacity>
         <TouchableOpacity onPress={handlePlayPause}>
           <Ionicons
@@ -54,11 +51,7 @@ const Controls: React.FC<ControlsProps> = ({
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleNext}>
-          <Ionicons
-            name="play-skip-forward-outline"
-            size={30}
-            color={isDarkTheme ? "#fff" : "#fff"}
-          />
+          <AntDesign name="stepforward" size={30} color="white" />
         </TouchableOpacity>
       </View>
 
@@ -67,7 +60,7 @@ const Controls: React.FC<ControlsProps> = ({
           <Ionicons
             name="repeat-outline"
             size={30}
-            color={isRepeat ? "#1DB954" : "#fff" }
+            color={isRepeat ? "#1DB954" : "#fff"}
           />
         </TouchableOpacity>
       </View>
@@ -82,10 +75,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "60%",
     marginTop: 16,
+    marginLeft: 15,
   },
   extraControls: {
     flexDirection: "row",
     marginTop: 20,
+    marginLeft: 15,
   },
 });
 

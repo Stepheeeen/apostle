@@ -85,7 +85,7 @@ const VerifyEmailScreen: React.FC = () => {
             {
               text: "Continue",
               onPress: () => {
-                /* Navigation logic */
+                router.push("/Auth/Signin")
               },
             },
           ]
