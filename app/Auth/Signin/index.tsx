@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Input from "@/components/reusable/Input";
 import ArrowButton from "@/components/reusable/Button";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link, router } from "expo-router";
 
 const SignIn = () => {
@@ -21,19 +22,26 @@ const SignIn = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("https://apostle.onrender.com/api/auth/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://apostle.onrender.com/api/auth/login",
+        {
+          email,
+          password,
+        }
+      );
 
       if (response.status === 200) {
+        await AsyncStorage.setItem("userName", response.data.data.name);
+        await AsyncStorage.setItem("userEmail", response.data.data.email);
+        await AsyncStorage.setItem("userId", response.data.data._id);
         Alert.alert("Login Successful", "Welcome back!");
         router.push("/Pages/Home");
       }
-    } catch (error:any) {
+    } catch (error: any) {
       Alert.alert(
         "Login Failed",
-        error.response?.data?.message || "Something went wrong. Please try again."
+        error.response?.data?.message ||
+          "Something went wrong. Please try again."
       );
     } finally {
       setLoading(false);
@@ -51,7 +59,11 @@ const SignIn = () => {
       <Text style={tw`text-3xl font-bold mb-6`}>Welcome Back</Text>
 
       {/* Input Fields */}
-      <Input label="Email" value={email} onChangeText={(text) => setEmail(text)} />
+      <Input
+        label="Email"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+      />
       <Input
         label="Password"
         secureTextEntry={true}
@@ -74,7 +86,10 @@ const SignIn = () => {
           Sign Up
         </Link>
 
-        <Link href={"/Auth/Forgotpassword"} style={tw`text-blue-500 underline mt-4`}>
+        <Link
+          href={"/Auth/Forgotpassword"}
+          style={tw`text-blue-500 underline mt-4`}
+        >
           Forget Password?
         </Link>
       </View>
