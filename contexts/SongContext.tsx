@@ -5,6 +5,7 @@ interface Song {
   title: string;
   author: string;
   trackImg: string;
+  trackId: any;
   previewUrl?: string; // Optional property
 }
 

@@ -4,6 +4,7 @@ import { useSongContext } from "@/contexts/SongContext"; // Correct import
 import tw from "twrnc";
 import { FontAwesome } from "@expo/vector-icons";
 import MusicPlayer from "@/app/Pages/Sample";
+import LikeToggle from "../reusable/LikeToggle";
 
 const MiniPlayer = () => {
   const { currentSong, setCurrentSong } = useSongContext();
@@ -29,10 +30,8 @@ const MiniPlayer = () => {
     );
   }
 
-  const onLike = () => {
-    // Handle like functionality here (e.g., save to a favorites list)
-    console.log(`Liked song: ${currentSong.title}`);
-    console.log(currentSong.trackImg);
+  const handleLikeChange = (newLikeStatus: any) => {
+    console.log("Updated like status:", newLikeStatus);
   };
 
   const onPlayPause = () => {
@@ -55,7 +54,7 @@ const MiniPlayer = () => {
       >
         <Image
           source={{ uri: currentSong?.trackImg || "" }}
-          style={tw`w-12 h-12 rounded-full`}
+          style={tw`w-12 h-12 rounded-md`}
         />
         <View style={tw`flex-1 ml-4`}>
           <Text style={tw`text-white font-bold`}>
@@ -64,9 +63,11 @@ const MiniPlayer = () => {
           <Text style={tw`text-white`}>{currentSong?.author || ""}</Text>
         </View>
 
-        <Pressable onPress={onLike} style={tw`mr-4`}>
-          <FontAwesome name="heart-o" size={20} color="white" />
-        </Pressable>
+        <LikeToggle
+          trackId={currentSong?.trackId}
+          initialLiked={false}
+          onLikeChange={handleLikeChange} // Optional callback
+        />
       </Pressable>
       {isDrawerOpen && (
         <MusicPlayer closeDrawer={() => setIsDrawerOpen(false)} />

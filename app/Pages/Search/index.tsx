@@ -134,7 +134,7 @@ const Index = () => {
             )}
           </KeyboardAvoidingView>
 
-          <NavigationBar />
+          {/* <NavigationBar /> */}
         </SongProvider>
       )}
     </>

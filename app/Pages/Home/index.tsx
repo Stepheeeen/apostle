@@ -50,7 +50,7 @@ const Index = () => {
           {/* MiniPlayer */}
           <MiniPlayer />
 
-          <NavigationBar />
+          {/* <NavigationBar /> */}
         </SongProvider>
       )}
     </>
