@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 
 // Define the Song interface
 interface Song {
+  _id: string;
   title: string;
   author: string;
   trackImg: string;

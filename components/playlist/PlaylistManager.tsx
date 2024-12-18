@@ -5,6 +5,8 @@ import {
   ActivityIndicator,
   FlatList,
   SafeAreaView,
+  TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import tw from "twrnc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -18,6 +20,7 @@ import EmptyPlaylists from "./EmptyPlaylists";
 import EmptyDownloads from "./EmptyDownloads";
 import { baseUrl } from "@/constants";
 import { Playlist } from "@/constants/Types";
+import { Ionicons } from "@expo/vector-icons";
 
 const PlaylistManager: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -53,14 +56,13 @@ const PlaylistManager: React.FC = () => {
   // Fetch playlists when userId is available
   useEffect(() => {
     const fetchPlaylists = async () => {
-      if (!userId) return;
-
       try {
         setIsLoading(true);
         const response = await axios.get(
-          `https://apostle.onrender.com/api/playlist/getUserPlayList/${userId}`, {withCredentials: true}
+          `https://apostle.onrender.com/api/playlist/getUserAllPlayList`,
+          { withCredentials: true }
         );
-        setPlaylists(response.data); // Assuming response.data is an array of playlists
+        setPlaylists(response.data.data); // Assuming `response.data.data` holds the playlists
       } catch (error) {
         console.error("Error fetching playlists:", error);
       } finally {
@@ -69,7 +71,22 @@ const PlaylistManager: React.FC = () => {
     };
 
     fetchPlaylists();
-  }, [userId]);
+  }, []);
+
+  const refresh = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `https://apostle.onrender.com/api/playlist/getUserAllPlayList`,
+        { withCredentials: true }
+      );
+      setPlaylists(response.data.data); // Assuming `data` contains playlists
+    } catch (error) {
+      console.error("Error refreshing playlists:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const filteredPlaylists = playlists.filter((playlist) =>
     playlist.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -78,54 +95,71 @@ const PlaylistManager: React.FC = () => {
     download.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleAddPlaylistButton = () => setIsAddPlaylistModalVisible(true);
+  const handleAddPlaylistButton = () => {
+    setIsAddPlaylistModalVisible(true);
+  };
 
   return (
     <>
       <Topbar />
-      <SafeAreaView style={tw`flex-1`}>
-        <View style={tw`flex-row items-center mx-4 my-4`}>
-          <TextInput
-            style={tw`flex-1 px-4 py-3 bg-gray-100 rounded-xl text-base mr-2`}
-            placeholder="Search playlists..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-        <View style={tw`flex-row px-4 mb-4`}>
-          <Tab
-            isActive={activeTab === "playlists"}
-            label="Playlists"
-            onPress={() => setActiveTab("playlists")}
-          />
-          <Tab
-            isActive={activeTab === "downloads"}
-            label="Downloads"
-            onPress={() => setActiveTab("downloads")}
-          />
-        </View>
-        {isLoading ? (
-          <ActivityIndicator size="large" color="#0000ff" style={tw`mt-10`} />
-        ) : (
-          <FlatList
-            data={
-              activeTab === "playlists" ? filteredPlaylists : filteredDownloads
-            }
-            renderItem={({ item }) => <PlaylistCard item={item} />}
-            keyExtractor={(item: any) => item._id} // Ensure `_id` is unique for each playlist
-            ListEmptyComponent={
-              activeTab === "playlists" ? (
-                <EmptyPlaylists onCreatePlaylist={handleAddPlaylistButton} />
-              ) : (
-                <EmptyDownloads />
-              )
-            }
-          />
+      <FlatList
+        data={activeTab === "playlists" ? filteredPlaylists : filteredDownloads}
+        renderItem={({ item }) => (
+          <PlaylistCard item={item} refresh={refresh} />
         )}
-      </SafeAreaView>
+        keyExtractor={(item: any) => item._id.toString()} // Ensure `_id` is unique and stringified
+        ListHeaderComponent={
+          <>
+            <View style={tw`flex-row items-center mx-4 my-4`}>
+              <TextInput
+                style={tw`flex-1 px-4 py-3 bg-white rounded-xl text-base mr-2`}
+                placeholder="Search playlists..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+              <TouchableOpacity
+                style={tw`flex items-center justify-center bg-[#007AFF] p-2 rounded-lg`}
+                onPress={handleAddPlaylistButton}
+              >
+                <Ionicons name="add" size={28} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+            <View style={tw`flex-row px-4 mb-4`}>
+              <Tab
+                isActive={activeTab === "playlists"}
+                label="Playlists"
+                onPress={() => setActiveTab("playlists")}
+              />
+              <Tab
+                isActive={activeTab === "downloads"}
+                label="Downloads"
+                onPress={() => setActiveTab("downloads")}
+              />
+            </View>
+          </>
+        }
+        ListEmptyComponent={
+          activeTab === "playlists" ? (
+            <EmptyPlaylists onCreatePlaylist={handleAddPlaylistButton} />
+          ) : (
+            <EmptyDownloads />
+          )
+        }
+        // ListFooterComponent={
+        //   isLoading && (
+        //     <ActivityIndicator size="large" color="#0000ff" style={tw`mt-10`} />
+        //   )
+        // }
+        contentContainerStyle={tw`flex-grow pb-[50%]`} // Ensures proper layout and padding
+        showsVerticalScrollIndicator={false} // Optional: Hides the vertical scrollbar
+      />
+
       <AddPlaylistModal
         visible={isAddPlaylistModalVisible}
-        onClose={() => setIsAddPlaylistModalVisible(false)}
+        onClose={() => {
+          setIsAddPlaylistModalVisible(false);
+          refresh();
+        }}
         playlists={playlists}
         setPlaylists={setPlaylists}
       />
