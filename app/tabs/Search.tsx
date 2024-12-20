@@ -21,6 +21,7 @@ import {
 } from "react-native";
 import tw from "twrnc";
 import { SongProvider } from "@/contexts/SongContext";
+import MiniPlayer from "@/components/musicPlayer/Miniplayer";
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -133,6 +134,7 @@ const Index = () => {
               />
             )}
           </KeyboardAvoidingView>
+          {/* MiniPlayer */}
 
           {/* <NavigationBar /> */}
         </SongProvider>

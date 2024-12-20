@@ -103,7 +103,7 @@ const SplashScreen = () => {
       translateX.value = withSpring(-((page + 1) * width));
     } else {
       // Navigate to SignUp page
-      router.push("/Auth/Signup");
+      router.push("/Auth/Signin");
     }
   };
 

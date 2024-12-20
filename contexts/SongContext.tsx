@@ -1,31 +1,26 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+// contexts/SongContext.tsx
+import React, { createContext, useContext, useState } from "react";
 
-// Define the Song interface
 interface Song {
-  _id: string;
+  trackId: string;
   title: string;
   author: string;
+  previewUrl: string;
   trackImg: string;
-  trackId: any;
-  previewUrl?: string; // Optional property
 }
 
-// Define the context type
-interface SongContextType {
-  currentSong: Song | null; // Current song being played or selected
-  setCurrentSong: (song: Song | null) => void; // Function to update the current song
+interface SongContextProps {
+  currentSong: Song | null;
+  setCurrentSong: (song: Song | null) => void;
 }
 
-// Create the SongContext
-const SongContext = createContext<SongContextType | undefined>(undefined);
+const SongContext = createContext<SongContextProps>({
+  currentSong: null,
+  setCurrentSong: () => {},
+});
 
-interface SongProviderProps {
-  children: ReactNode; // Accepts React children components
-}
-
-// SongProvider component to wrap the app and provide context
-export const SongProvider: React.FC<SongProviderProps> = ({ children }) => {
-  const [currentSong, setCurrentSong] = useState<Song | null>(null); // State to store the current song
+export const SongProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [currentSong, setCurrentSong] = useState<Song | null>(null);
 
   return (
     <SongContext.Provider value={{ currentSong, setCurrentSong }}>
@@ -34,11 +29,4 @@ export const SongProvider: React.FC<SongProviderProps> = ({ children }) => {
   );
 };
 
-// Custom hook to use the SongContext
-export const useSongContext = () => {
-  const context = useContext(SongContext); // Access the SongContext
-  if (!context) {
-    throw new Error("useSongContext must be used within a SongProvider");
-  }
-  return context; // Return context value (currentSong and setCurrentSong)
-};
+export const useSongContext = () => useContext(SongContext);

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import AudioPlayer from "@/components/musicPlayer/AudioPlayer";
 import { View, Text, ScrollView, Pressable, Image } from "react-native";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
@@ -48,7 +47,7 @@ const Index = () => {
           </ScrollView>
 
           {/* MiniPlayer */}
-          <MiniPlayer />
+          {/* <MiniPlayer  /> */}
 
           {/* <NavigationBar /> */}
         </SongProvider>

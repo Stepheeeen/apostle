@@ -1,77 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Image, Pressable } from "react-native";
 import { useSongContext } from "@/contexts/SongContext"; // Correct import
 import tw from "twrnc";
-import { FontAwesome } from "@expo/vector-icons";
-import MusicPlayer from "@/app/Pages/Sample";
 import LikeToggle from "../reusable/LikeToggle";
+import MusicPlayer from "./MusicPlayer";
 
 const MiniPlayer = () => {
-  const { currentSong, setCurrentSong } = useSongContext();
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { currentSong } = useSongContext();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // Display loading state or fallback if currentSong is not available
-  if (!currentSong) {
-    return (
-      <Pressable
-        onPress={() => {}}
-        style={tw`absolute bottom-[12%] left-[2%] right-0 flex-row items-center justify-between p-3 bg-[#3EB3F2] rounded-lg w-[96%]`}
-      >
-        <View style={tw`h-12 w-12 rounded-full bg-gray-300`} />
-        <View style={tw`flex-1 ml-4`}>
-          <Text style={tw`text-white font-semibold`}>Song Title</Text>
-          <Text style={tw`text-white text-sm`}>Author</Text>
-        </View>
-        <Pressable style={tw`mr-4`}>
-          <FontAwesome name="heart-o" size={20} color="white" disabled={true} />
-        </Pressable>
-      </Pressable>
-    );
-  }
+  // Log the playback state whenever it changes
+  useEffect(() => {
+    console.log("Playback state changed: ", currentSong);
+  }, [currentSong]);
 
-  const handleLikeChange = (newLikeStatus: any) => {
+  console.log("Playback state changed: ", currentSong);
+
+  // Handle like status change
+  const handleLikeChange = (newLikeStatus: boolean) => {
     console.log("Updated like status:", newLikeStatus);
   };
 
-  const onPlayPause = () => {
-    // Toggle play/pause
-    setIsPlaying((prevState) => !prevState);
-    if (isPlaying) {
-      // Pause the music (e.g., if using expo-av, you can pause the sound)
-      console.log("Pause");
-    } else {
-      // Play the music (e.g., play the sound)
-      console.log("Play");
-    }
-  };
+  // Fallback values for song title, author, and image
+  const songTitle = currentSong?.title || "No Song Playing";
+  const songAuthor = currentSong?.author || "Unknown Author";
+  const songImage = currentSong?.trackImg || "https://via.placeholder.com/150x150";
 
   return (
     <>
+      {/* Mini Player */}
       <Pressable
         onPress={() => setIsDrawerOpen(true)}
         style={tw`absolute bottom-[12%] left-[2%] right-0 flex-row items-center justify-between p-3 bg-[#3EB3F2] rounded-lg w-[96%]`}
       >
         <Image
-          source={{ uri: currentSong?.trackImg || "" }}
+          source={{ uri: songImage }}
           style={tw`w-12 h-12 rounded-md`}
         />
         <View style={tw`flex-1 ml-4`}>
-          <Text style={tw`text-white font-bold`}>
-            {currentSong?.title || "No Song Playing"}
-          </Text>
-          <Text style={tw`text-white`}>{currentSong?.author || ""}</Text>
+          <Text style={tw`text-white font-bold`}>{songTitle}</Text>
+          <Text style={tw`text-white`}>{songAuthor}</Text>
         </View>
-
         <LikeToggle
           trackId={currentSong?.trackId}
           initialLiked={false}
-          onLikeChange={handleLikeChange} // Optional callback
+          onLikeChange={handleLikeChange}
         />
       </Pressable>
-      {isDrawerOpen && (
-        <MusicPlayer closeDrawer={() => setIsDrawerOpen(false)} />
-      )}
+
+      {/* MusicPlayer Drawer */}
+      {isDrawerOpen && <MusicPlayer closeDrawer={() => setIsDrawerOpen(false)} />}
     </>
   );
 };
