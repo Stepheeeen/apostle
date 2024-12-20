@@ -13,7 +13,8 @@ import axios, { AxiosError } from "axios";
 import tw from "twrnc";
 import ArrowButton from "@/components/reusable/Button";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Type definitions
 interface ApiErrorResponse {
@@ -21,7 +22,6 @@ interface ApiErrorResponse {
 }
 
 const VerifyEmailScreen: React.FC = () => {
-  const router = useRouter(); // Hook for navigation
   const [otp, setOtp] = useState<string[]>(["", "", "", ""]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [remainingTime, setRemainingTime] = useState<number>(120);
@@ -78,6 +78,7 @@ const VerifyEmailScreen: React.FC = () => {
       );
 
       if (response.data?.success) {
+        AsyncStorage.setItem("OTP", code);
         Alert.alert(
           "Verification Successful",
           "Your email has been verified.",
@@ -85,7 +86,7 @@ const VerifyEmailScreen: React.FC = () => {
             {
               text: "Continue",
               onPress: () => {
-                router.push("/Auth/Signin");
+                router.push("/Auth/Resetpassword");
               },
             },
           ]
