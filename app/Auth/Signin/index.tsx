@@ -35,7 +35,7 @@ const SignIn = () => {
         await AsyncStorage.setItem("userEmail", response.data.data.email);
         await AsyncStorage.setItem("userId", response.data.data._id);
         Alert.alert("Login Successful", "Welcome back!");
-        router.push("/Pages/Home");
+        router.push("/tabs/Home");
       }
     } catch (error: any) {
       Alert.alert(

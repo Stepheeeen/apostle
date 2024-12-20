@@ -97,7 +97,7 @@ const SettingsScreen: React.FC = () => {
         <Ionicons name="chevron-back" size={25} color="#4B5563" />
         <Text
           style={tw`text-[17px] font-medium text-[#4B5563]`}
-          onPress={() => router.push("/Pages/Home")}
+          onPress={() => router.back()}
         >
           Back
         </Text>
@@ -114,7 +114,7 @@ const SettingsScreen: React.FC = () => {
           onPress={() => handleItemPress("profile")}
         >
           <Image
-            source={require("../../../assets/images/Apostle-Logo-sm.png")} // Replace with your avatar image path
+            source={require("../../assets/images/Apostle-Logo-sm.png")} // Replace with your avatar image path
             style={tw`w-12 h-12 rounded-full mr-3`}
           />
           <View>

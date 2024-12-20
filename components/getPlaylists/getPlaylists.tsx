@@ -14,7 +14,7 @@ import { Audio } from "expo-av";
 import axios from "axios";
 import tw from "twrnc";
 import NetInfo from "@react-native-community/netinfo";
-import MusicPlayer from "@/app/Pages/Sample";
+import MusicPlayer from "../musicPlayer/MusicPlayer";
 import MiniPlayer from "../musicPlayer/Miniplayer";
 import { useSongContext } from "@/contexts/SongContext";
 

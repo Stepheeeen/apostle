@@ -31,7 +31,7 @@ const PlaylistCard = ({
   return (
     <TouchableOpacity
       style={tw`bg-white rounded-xl mb-3 p-4 shadow-sm`}
-      onPress={() => router.push(`/Pages/Playlist/${item._id}`)} // Navigate to the playlist page
+      onPress={() => router.push(`/tabs/${item._id}`)} // Navigate to the playlist page
     >
       <View style={tw`flex-row justify-between items-center`}>
         <View>

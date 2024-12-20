@@ -42,15 +42,22 @@ const AddToPlaylistModal = ({
     }
   };
 
-  // Call fetchPlaylists when the modal opens
+  // Fetch playlists when modal opens
   useEffect(() => {
     if (isVisible) {
-      fetchPlaylists();
+      fetchPlaylists(); // Fetch playlists when modal is visible
+    } else {
+      setPlaylists([]); // Clear playlists when modal is closed
     }
-  }, [isVisible]);
+  }, [isVisible]); // Re-run when the visibility of the modal changes
 
   // Handle adding a track to a playlist
   const handleAddToPlaylist = async () => {
+    if (!playlistId) {
+      alert("Please select a playlist.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "https://apostle.onrender.com/api/playlist/addToPlayList",
@@ -102,8 +109,7 @@ const AddToPlaylistModal = ({
                       style={tw`p-3 border-b border-gray-200`}
                       onPress={() => {
                         setPlaylistId(item._id);
-                        console.log(playlistId);
-                        handleAddToPlaylist();
+                        setSelectedPlaylist(item.name); // Track selected playlist
                       }}
                     >
                       <Text style={tw`text-lg`}>{item.name}</Text>
@@ -116,6 +122,15 @@ const AddToPlaylistModal = ({
               )}
             </>
           )}
+
+          {/* Add Button */}
+          <TouchableOpacity
+            style={tw`mt-4 bg-blue-500 p-3 rounded`}
+            onPress={handleAddToPlaylist}
+            disabled={!selectedPlaylist}
+          >
+            <Text style={tw`text-white text-center`}>Add to {selectedPlaylist}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
