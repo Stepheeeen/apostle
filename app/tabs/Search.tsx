@@ -65,7 +65,7 @@ const Index = () => {
         <SongProvider>
           {/* Logo and Avatar Header */}
           <KeyboardAvoidingView
-            style={{ flex: 1, marginBottom: 80 }}
+            style={{ flex: 1, marginBottom: 160 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
             <Topbar />
