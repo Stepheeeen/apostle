@@ -89,20 +89,11 @@ const Index = () => {
 
             {search === "" ? (
               <ScrollView style={tw`bg-gray-50 h-full w-full`}>
-                {/* Trending */}
-                <View style={tw`mb-6 mt-3`}>
-                  <GetTrending text=" Recommended Albums & Playlists" />
-                </View>
-
-                {/* Quick Picks Section */}
-                <View style={tw`mb-6`}>
-                  <GetQuickPicks text={"Recommended Musics & Podcasts"} />
-                </View>
 
                 {/* Categories section */}
                 <View style={tw`w-[98%]`}>
                   <Text style={tw`text-lg font-bold mb-3 px-4`}>
-                    Recommended Categories
+                    Browse all
                   </Text>
                   <GetCategories />
                 </View>

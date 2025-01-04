@@ -1,103 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   Image,
   Pressable,
-  ScrollView,
   ActivityIndicator,
-  StyleSheet,
+  ScrollView,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Audio } from "expo-av";
-import axios from "axios";
 import tw from "twrnc";
-import NetInfo from "@react-native-community/netinfo";
-import MusicPlayer from "../musicPlayer/MusicPlayer";
-import MiniPlayer from "../musicPlayer/Miniplayer";
-import { useSongContext } from "@/contexts/SongContext";
+import { useFetchSongs } from "@/hooks/useFetchSongs";
+import { useAudio } from "@/contexts/AudioContext";
+import MusicPlayer from "@/components/musicPlayer/MusicPlayer";
 
-// Define a type for the song data
-interface Song {
-  trackId: string;
-  title: string;
-  author: string;
-  trackImg: string;
-  previewUrl?: string;
-}
-
-// Reusable fetch data hook
-const useFetchSongs = (url: string) => {
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchSongs = async () => {
-      try {
-        const res = await axios.get<{ data: Song[]; success: boolean }>(url, {
-          withCredentials: true,
-        });
-        if (res.data.success) {
-          setSongs(res.data.data);
-        } else {
-          throw new Error("Failed to fetch songs.");
-        }
-      } catch (err: any) {
-        console.error(err.response?.data || err.message);
-        setError("Failed to load data. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSongs();
-  }, [url]);
-
-  return { songs, error, loading };
-};
-
-//Quick Picks
+// Quick Picks
 export const GetQuickPicks = ({ text }: { text: any }) => {
   const { songs, error, loading } = useFetchSongs(
     "https://apostle.onrender.com/api/song/getQuickPicks"
   );
-  const [currentSound, setCurrentSound] = useState<Audio.Sound | null>(null);
-  const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
-
-  const playPauseSong = async (song: any) => {
-    if (playingTrackId === song.trackId) {
-      // Pause if already playing
-      if (currentSound) {
-        await currentSound.pauseAsync();
-        setPlayingTrackId(null);
-      }
-    } else {
-      // Stop the current sound if playing
-      if (currentSound) {
-        await currentSound.unloadAsync();
-        setCurrentSound(null);
-      }
-      try {
-        const { sound } = await Audio.Sound.createAsync(
-          { uri: song.previewUrl },
-          { shouldPlay: true }
-        );
-        setCurrentSound(sound);
-        setPlayingTrackId(song.trackId);
-
-        sound.setOnPlaybackStatusUpdate((status: any) => {
-          if (status.didJustFinish) {
-            setPlayingTrackId(null); // Reset state when the track finishes
-            setCurrentSound(null);
-          }
-        });
-      } catch (error) {
-        console.error("Error playing sound:", error);
-      }
-    }
-  };
+  const { playPauseSong, playingTrackId } = useAudio();
 
   return (
     <View style={tw`px-4 mb-6`}>
@@ -131,11 +54,11 @@ export const GetQuickPicks = ({ text }: { text: any }) => {
                   {song.author || "Unknown Artist"}
                 </Text>
               </View>
-              <Ionicons
+              {/* <Ionicons
                 name={playingTrackId === song.trackId ? "pause" : "play"}
                 size={24}
                 color="#0081C9"
-              />
+              /> */}
             </Pressable>
           ))
         ) : (
@@ -149,7 +72,7 @@ export const GetQuickPicks = ({ text }: { text: any }) => {
 // Get Recently Played
 export const GetRecentlyPlays = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { setCurrentSong } = useSongContext(); // Use setCurrentSong from context
+  const { playPauseSong, setCurrentSong, playingTrackId } = useAudio();
   const { songs, error, loading } = useFetchSongs(
     "https://apostle.onrender.com/api/song/getRecentPlays"
   );
@@ -211,7 +134,7 @@ export const GetRecentlyPlays = () => {
 // Podcasts Component
 export const GetPodcasts = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { setCurrentSong } = useSongContext(); // Use setCurrentSong from context
+  const { setCurrentSong } = useAudio();
   const { songs, error, loading } = useFetchSongs(
     "https://apostle.onrender.com/api/song/getAllSongs"
   );
@@ -266,10 +189,10 @@ export const GetPodcasts = () => {
   );
 };
 
-//New Release Component
+// New Release Component
 export const GetNewReleases = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { setCurrentSong } = useSongContext(); // Use setCurrentSong from context
+  const { setCurrentSong } = useAudio();
   const { songs, error, loading } = useFetchSongs(
     "https://apostle.onrender.com/api/song/getNewRelease"
   );
@@ -320,10 +243,10 @@ export const GetNewReleases = () => {
   );
 };
 
-//Trending Component
+// Trending Component
 export const GetTrending = ({ text }: { text: string }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { setCurrentSong } = useSongContext(); // Use setCurrentSong from context
+  const { setCurrentSong } = useAudio();
   const { songs, error, loading } = useFetchSongs(
     "https://apostle.onrender.com/api/song/getRecommended"
   );
@@ -374,6 +297,17 @@ export const GetTrending = ({ text }: { text: string }) => {
   );
 };
 
+const fallbackImages = [
+  require("@/assets/images/category-1.png"),
+  require("@/assets/images/category-2.png"),
+  require("@/assets/images/category-3.png"),
+  require("@/assets/images/category-4.png"),
+  require("@/assets/images/category-5.png"),
+  require("@/assets/images/category-6.png"),
+  // Add more URLs as needed
+];
+
+// Categories Component
 export const GetCategories = () => {
   const {
     songs: categories,
@@ -383,20 +317,25 @@ export const GetCategories = () => {
 
   return (
     <View style={tw`px-4 mb-6 mt-4`}>
-      {/* Loading or Error States */}
       {loading ? (
         <ActivityIndicator size="large" color="#0081C9" />
       ) : error ? (
         <Text style={tw`text-red-500 text-center`}>{error}</Text>
       ) : categories && categories.length > 0 ? (
         <ScrollView contentContainerStyle={styles.gridContainer}>
-          {categories.map((category: any) => {
-            const backgroundColor = "#e0e0e0"; // Alternating colors
+          {categories.map((category: any, index: number) => {
+            const backgroundColor = "#e0e0e0";
+            const imageUrl = category.imageUrl || fallbackImages[index % fallbackImages.length];
             return (
               <View
                 key={category.slug}
                 style={[styles.gridItem, { backgroundColor }]}
               >
+                <Image
+                  source={typeof imageUrl === 'string' ? { uri: imageUrl } : imageUrl}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
                 <Text style={styles.text}>{category.name}</Text>
               </View>
             );
@@ -414,21 +353,29 @@ export const GetCategories = () => {
 const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: "row",
-    flexWrap: "wrap", // Allows wrapping for grid layout
-    justifyContent: "space-between", // Distributes items with space between
-    paddingVertical: 10,
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   gridItem: {
-    width: "48%", // Ensures two items per row with some spacing
-    height: 100, // Adjust as necessary for your design
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
+    width: "48%",
+    height: 100,
     marginBottom: 10,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0,
   },
   text: {
-    fontSize: 19,
-    fontWeight: "500",
-    textAlign: "center",
+    color: "#ffff",
+    fontSize: 16,
+    fontWeight: "medium",
+    marginTop: 7,
+    marginLeft: 10,
+    zIndex: 1,
   },
 });

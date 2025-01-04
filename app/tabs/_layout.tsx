@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
 } from "react-native";
 import { Tabs, useRouter, usePathname } from "expo-router";
 import { Entypo, AntDesign } from "@expo/vector-icons";
@@ -14,8 +13,9 @@ import Svg, { Path } from "react-native-svg";
 import MiniPlayer from "@/components/musicPlayer/Miniplayer"; // Your player
 import { SongProvider } from "@/contexts/SongContext";
 import tw from "twrnc";
+import { AudioProvider } from "@/contexts/AudioContext";
 
-export default function Layout() {
+const Layout = () => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -58,56 +58,60 @@ export default function Layout() {
 
   return (
     <SongProvider>
-      <SafeAreaView style={tw`flex-1 bg-gray-100`}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "android" ? "padding" : "height"}
-          style={tw`flex-1`}
-        >
-          {/* <ScrollView contentContainerStyle={tw`flex-1`}> */}
-          {/* Tabs Navigation */}
-          <Tabs
-            screenOptions={{
-              headerShown: false, // Hide screen headers
-              tabBarStyle: { display: "none" }, // Hide default TabBar
-            }}
+      <AudioProvider>
+        <SafeAreaView style={tw`flex-1 bg-gray-100`}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "android" ? "padding" : "height"}
+            style={tw`flex-1`}
           >
-            <Tabs.Screen name="Home" />
-            <Tabs.Screen name="Search" />
-            <Tabs.Screen name="Library" />
-          </Tabs>
-          {/* </ScrollView> */}
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-      {/* MiniPlayer */}
-      <MiniPlayer />
+            {/* <ScrollView contentContainerStyle={tw`flex-1`}> */}
+            {/* Tabs Navigation */}
+            <Tabs
+              screenOptions={{
+                headerShown: false, // Hide screen headers
+                tabBarStyle: { display: "none" }, // Hide default TabBar
+              }}
+            >
+              <Tabs.Screen name="Home" />
+              <Tabs.Screen name="Search" />
+              <Tabs.Screen name="Library" />
+            </Tabs>
+            {/* </ScrollView> */}
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+        {/* MiniPlayer */}
+        <MiniPlayer />
 
-      {/* Custom Bottom Navigation */}
-      <View
-        style={tw`absolute bottom-0 left-0 right-0 bg-[#0081C9] p-3 py-5 shadow-lg flex-row justify-between items-center`}
-      >
-        {Links.map((link, index) => (
-          <TouchableOpacity
-            key={index}
-            style={tw`flex-row items-center px-5 py-1 ${
-              pathname === link.path
-                ? "border border-white rounded-full py-2 gap-2"
-                : ""
-            }`}
-            onPress={() => router.push(link.path)}
-          >
-            {pathname === link.path ? (
-              <View style={tw`flex flex-row gap-x-2`}>
-                {link.icon}
-                <Text style={tw`font-medium text-lg text-[#FFFFFF]`}>
-                  {link.link.charAt(0).toUpperCase() + link.link.slice(1)}
-                </Text>
-              </View>
-            ) : (
-              link.icon
-            )}
-          </TouchableOpacity>
-        ))}
-      </View>
+        {/* Custom Bottom Navigation */}
+        <View
+          style={tw`absolute bottom-0 left-0 right-0 bg-[#0081C9] p-3 py-5 shadow-lg flex-row justify-between items-center`}
+        >
+          {Links.map((link, index) => (
+            <TouchableOpacity
+              key={index}
+              style={tw`flex-row items-center px-5 py-1 ${
+                pathname === link.path
+                  ? "border border-white rounded-full py-2 gap-2"
+                  : ""
+              }`}
+              onPress={() => router.push(link.path)}
+            >
+              {pathname === link.path ? (
+                <View style={tw`flex flex-row gap-x-2`}>
+                  {link.icon}
+                  <Text style={tw`font-medium text-lg text-[#FFFFFF]`}>
+                    {link.link.charAt(0).toUpperCase() + link.link.slice(1)}
+                  </Text>
+                </View>
+              ) : (
+                link.icon
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+      </AudioProvider>
     </SongProvider>
   );
-}
+};
+
+export default Layout;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   View,
@@ -6,18 +6,15 @@ import {
   Image,
   Pressable,
   TouchableOpacity,
-  Alert,
 } from "react-native";
-import { Audio, AVPlaybackStatus } from "expo-av";
 import tw from "twrnc";
-import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Svg, { Path } from "react-native-svg";
 import Slider from "@react-native-community/slider";
-import Controls from "@/components/musicPlayer/Controls";
-import AddToPlaylistModal from "@/components/playlist/AddToPlaylist";
 import LikeToggle from "@/components/reusable/LikeToggle";
-import { useSongContext } from "@/contexts/SongContext";
+import AddToPlaylistModal from "@/components/playlist/AddToPlaylist";
+import { useAudio } from "@/contexts/AudioContext";
 import { StyleSheet } from "react-native";
 
 interface MusicPlayerProps {
@@ -25,176 +22,22 @@ interface MusicPlayerProps {
 }
 
 const MusicPlayer: React.FC<MusicPlayerProps> = ({ closeDrawer }) => {
-  const { currentSong, setCurrentSong } = useSongContext();
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [isShuffle, setIsShuffle] = useState(false);
-  const [isRepeat, setIsRepeat] = useState(false);
+  const {
+    currentSong,
+    isPlaying,
+    progress,
+    duration,
+    isShuffle,
+    isRepeat,
+    playPauseSong,
+    handleSliderChange,
+    handlePrev,
+    handleNext,
+    toggleShuffle,
+    toggleRepeat,
+    formatTime,
+  } = useAudio();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  // Configure audio session on mount
-  useEffect(() => {
-    const setupAudio = async () => {
-      try {
-        await Audio.setAudioModeAsync({
-          playsInSilentModeIOS: true,
-          staysActiveInBackground: true,
-          shouldDuckAndroid: true,
-        });
-      } catch (err) {
-        console.error("Failed to configure audio:", err);
-      }
-    };
-    setupAudio();
-  }, []);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-    };
-  }, []);
-
-  // Handle current song changes
-  useEffect(() => {
-    if (currentSong) {
-      playPauseSong(currentSong);
-    }
-  }, [currentSong]);
-
-  const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
-    if (!status.isLoaded) return;
-
-    setProgress(status.positionMillis);
-    setIsPlaying(status.isPlaying);
-    setDuration(status.durationMillis ?? 0);
-
-    if (status.didJustFinish) {
-      if (isRepeat) {
-        sound?.replayAsync();
-      } else {
-        handleTrackEnd();
-      }
-    }
-  };
-
-  const handleTrackEnd = () => {
-    setPlayingTrackId(null);
-    setIsPlaying(false);
-    setProgress(0);
-    setSound(null);
-    handleNext();
-  };
-
-  const playPauseSong = async (song: any) => {
-    try {
-      if (playingTrackId === song.trackId && sound) {
-        // Toggle play/pause for the same song
-        if (isPlaying) {
-          await sound.pauseAsync();
-          setIsPlaying(false);
-        } else {
-          await sound.playAsync();
-          setIsPlaying(true);
-        }
-      } else {
-        // Stop current sound if a new track is selected
-        if (sound) {
-          await sound.unloadAsync();
-          setSound(null);
-          setPlayingTrackId(null);
-        }
-
-        if (!song.previewUrl) {
-          throw new Error("No preview URL available for this song.");
-        }
-
-        // Load and play the new track
-        const { sound: newSound } = await Audio.Sound.createAsync(
-          { uri: song.previewUrl },
-          { shouldPlay: true },
-          onPlaybackStatusUpdate
-        );
-
-        setSound(newSound);
-        setPlayingTrackId(song.trackId);
-        setIsPlaying(true);
-
-        const status = await newSound.getStatusAsync();
-        if (status.isLoaded) {
-          setDuration(status.durationMillis ?? 0);
-        }
-      }
-    } catch (err) {
-      const error = err as Error;
-      setError(error.message);
-      Alert.alert("Playback Error", "Failed to play audio. Please try again.");
-    }
-  };
-
-  const handleSliderChange = async (value: number) => {
-    try {
-      if (sound && !isNaN(value)) {
-        await sound.setPositionAsync(value);
-        setProgress(value);
-      }
-    } catch (err) {
-      const error = err as Error;
-      setError(error.message);
-      Alert.alert("Error", "Failed to seek audio position");
-    }
-  };
-
-  const handlePrev = async () => {
-    try {
-      if (progress > 3000) {
-        await sound?.setPositionAsync(0);
-      } else {
-        if (sound) {
-          await sound.unloadAsync();
-          setSound(null);
-        }
-        setPlayingTrackId(null);
-        setIsPlaying(false);
-        // TODO: Add previous track logic
-      }
-    } catch (err) {
-      const error = err as Error;
-      setError(error.message);
-      Alert.alert("Error", "Failed to play previous track");
-    }
-  };
-
-  const handleNext = async () => {
-    try {
-      if (sound) {
-        await sound.unloadAsync();
-        setSound(null);
-      }
-      setPlayingTrackId(null);
-      setIsPlaying(false);
-      // TODO: Add next track logic with shuffle consideration
-    } catch (err) {
-      const error = err as Error;
-      setError(error.message);
-      Alert.alert("Error", "Failed to play next track");
-    }
-  };
-
-  const toggleShuffle = () => setIsShuffle(!isShuffle);
-  const toggleRepeat = () => setIsRepeat(!isRepeat);
-
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60000);
-    const seconds = Math.floor((time % 60000) / 1000);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
 
   if (!currentSong) return null;
 
@@ -209,7 +52,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ closeDrawer }) => {
         <View
           style={tw`bg-[#0081C9] p-5 py-10 rounded-t-lg h-full flex items-center w-full`}
         >
-          {/* Header */}
           <View style={tw`w-full flex flex-row justify-between items-center`}>
             <Pressable onPress={closeDrawer}>
               <Svg width="28" height="28" viewBox="0 0 24 24" fill="none">
@@ -230,22 +72,18 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ closeDrawer }) => {
             </TouchableOpacity>
           </View>
 
-          {/* Player Content */}
           <View
             style={tw`bg-[#0081C9] pt-[10%] rounded-t-lg h-[90%] flex justify-between items-center w-full`}
           >
-            {/* Album Art */}
             <View style={tw`items-center`}>
               <Image
                 source={{
-                  uri:
-                    currentSong.trackImg || "https://via.placeholder.com/150",
+                  uri: currentSong.trackImg || "https://via.placeholder.com/150",
                 }}
                 style={tw`w-[330px] h-[330px] mb-8 rounded-lg`}
               />
             </View>
 
-            {/* Song Info */}
             <View
               style={tw`w-full flex flex-row justify-between items-center mt-4`}
             >
@@ -260,7 +98,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ closeDrawer }) => {
               <LikeToggle />
             </View>
 
-            {/* Progress Bar */}
             <View style={tw`flex-row justify-between w-full`}>
               <Text style={tw`text-xs text-white`}>{formatTime(progress)}</Text>
               <Slider
@@ -276,7 +113,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ closeDrawer }) => {
               <Text style={tw`text-xs text-white`}>{formatTime(duration)}</Text>
             </View>
 
-            {/* Controls */}
             <View
               style={tw`flex flex-row items-center justify-between w-11/12`}
             >
