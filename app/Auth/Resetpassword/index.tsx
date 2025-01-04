@@ -89,13 +89,12 @@ const ResetPassword = () => {
       />
 
       {/* Submit Button */}
-      <View style={tw`w-full flex items-end mt-6`}>
-        <ArrowButton
-          direction="next"
-          disabled={false}
-          onPress={handleResetPassword} // Handle the password reset
-        />
-      </View>
+      <TouchableOpacity
+        style={tw`w-full h-[47px] rounded-md flex items-center bg-[#3EB3F2] justify-center mt-12`}
+        onPress={handleResetPassword}
+      >
+        <Text style={tw`text-white text-lg`}>Sign In</Text>
+      </TouchableOpacity>
 
       {/* Sign In Link */}
       <View style={tw`w-full flex flex-row items-center justify-between mt-4`}>

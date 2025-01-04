@@ -35,10 +35,11 @@ const SignUp = () => {
         Alert.alert("Success", "Account created successfully!");
         router.push("/Auth/Verify");
       }
-    } catch (error:any) {
+    } catch (error: any) {
       Alert.alert(
         "Sign Up Failed",
-        error.response?.data?.message || "Something went wrong. Please try again."
+        error.response?.data?.message ||
+          "Something went wrong. Please try again."
       );
     } finally {
       setLoading(false);
@@ -51,11 +52,7 @@ const SignUp = () => {
       <Text style={tw`text-3xl font-bold mb-6`}>Create Account</Text>
 
       {/* Input Fields */}
-      <Input
-        label="Name"
-        value={name}
-        onChangeText={(text) => setName(text)}
-      />
+      <Input label="Name" value={name} onChangeText={(text) => setName(text)} />
       <Input
         label="Email"
         value={email}
@@ -69,13 +66,12 @@ const SignUp = () => {
       />
 
       {/* Sign Up Button */}
-      <View style={tw`w-full flex items-end mt-6`}>
-        <ArrowButton
-          direction="next"
-          disabled={loading}
-          onPress={handleSignUp}
-        />
-      </View>
+      <TouchableOpacity
+        style={tw`w-full h-[47px] rounded-md flex items-center bg-[#3EB3F2] justify-center mt-12`}
+        onPress={handleSignUp}
+      >
+        <Text style={tw`text-white text-lg`}>Sign In</Text>
+      </TouchableOpacity>
 
       {/* Navigate to SignIn */}
       <Pressable onPress={() => router.push("/Auth/Signin")}>

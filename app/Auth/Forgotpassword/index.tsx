@@ -56,13 +56,12 @@ const ForgotPassword = () => {
       <Input onChangeText={setEmail} value={email} label="Email" />
 
       {/* Submit Button */}
-      <View style={tw`w-full flex items-end mt-6`}>
-        <ArrowButton
-          direction="next"
-          disabled={!email} // Disable the button if no email is entered
-          onPress={handleForgotPassword} // Call the API when button is pressed
-        />
-      </View>
+      <TouchableOpacity
+        style={tw`w-full h-[47px] rounded-md flex items-center bg-[#3EB3F2] justify-center mt-12`}
+        onPress={handleForgotPassword}
+      >
+        <Text style={tw`text-white text-lg`}>Sign In</Text>
+      </TouchableOpacity>
     </View>
   );
 };

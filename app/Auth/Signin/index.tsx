@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  Button,
+  Pressable,
+} from "react-native";
 import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
 import Input from "@/components/reusable/Input";
@@ -14,6 +21,7 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    setLoading(true);
     if (!email || !password) {
       Alert.alert("Validation Error", "Please fill in all fields.");
       return;
@@ -72,13 +80,12 @@ const SignIn = () => {
       />
 
       {/* Login Button */}
-      <View style={tw`w-full flex items-end mt-6`}>
-        <ArrowButton
-          direction="next"
-          disabled={loading}
-          onPress={handleLogin}
-        />
-      </View>
+      <TouchableOpacity
+        style={tw`w-full h-[47px] rounded-md flex items-center bg-[#3EB3F2] justify-center mt-12`}
+        onPress={handleLogin}
+      >
+        <Text style={tw`text-white text-lg`}>Sign In</Text>
+      </TouchableOpacity>
 
       {/* Sign Up & Forgot Password Links */}
       <View style={tw`w-full flex flex-row items-center justify-between mt-4`}>
