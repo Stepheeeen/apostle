@@ -59,7 +59,7 @@ export const GetQuickPicks = ({ text }: { text: any }) => {
                 size={24}
                 color="#0081C9"
               /> */}
-            </Pressable>
+            </Pressable> 
           ))
         ) : (
           <Text style={tw`text-gray-500 text-center`}>No songs available.</Text>
