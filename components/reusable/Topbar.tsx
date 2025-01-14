@@ -5,7 +5,7 @@ import tw from "twrnc";
 
 const Topbar = () => {
   return (
-    <View style={tw`p-4 flex-row justify-between items-center`}>
+    <View style={tw`p-4 flex-row justify-between items-center pt-[15%]`}>
       <View style={tw`flex-row items-center`}>
         <Image
           source={require("../../assets/images/Apostle-Logo-sm.png")}
