@@ -21,6 +21,7 @@ export const useMusicPlayer = () => {
         setCurrentSound(null);
       }
       try {
+        // Create and play the new sound
         const { sound } = await Audio.Sound.createAsync(
           { uri: song.previewUrl },
           { shouldPlay: true }
@@ -29,6 +30,7 @@ export const useMusicPlayer = () => {
         setPlayingTrackId(song.trackId);
         setCurrentSong(song);
 
+        // Set up a listener to handle when the song finishes
         sound.setOnPlaybackStatusUpdate((status: any) => {
           if (status.didJustFinish) {
             setPlayingTrackId(null);
@@ -42,5 +44,5 @@ export const useMusicPlayer = () => {
     }
   };
 
-  return { playOrPauseSong, currentSong, playingTrackId };
+  return { playOrPauseSong };
 };
